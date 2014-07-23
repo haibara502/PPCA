@@ -1,19 +1,24 @@
-Description:
+
+## Description
 
 	给定一棵有N个节点的无根树，树上每条边的长度都为1.现在请选定两个点u, v，在得到了一条从u到v的路径的基础上，使得每个点到这个路径的距离的和最小，并且这条路经的长度不能超过C。
-	
-Input:
+
+## Input Format
+
 	第一行包含两个数N， C。接下来N - 1行，每行包含两个数a, b，表示ab之间存在一条双向边。
 
-Output:
+## Output Format
+
 	输出最后所有点到你选定的路径的距离的和。
-	
-Sample Input:
+
+## Sample Input
+
 	3 1
 	1 2
 	2 3
 
-Sample Output:
+## Sample Output
+
 	1
 	
 Range:
