@@ -12,9 +12,8 @@ int s2[maxm], next2[maxm], g2[maxn];
 int s3[maxn][2], next3[maxn], g3[maxn], f3[maxn];
 int fa[maxn], a[maxn], d[maxn]; 
 int maxw[maxn], maxup[maxn], maxdown[maxn], minw[maxn], ans[maxn];
-int temp[maxm], v[maxm], fa1[maxm];
-bool vis[maxn], ff[maxn];
-int N, M, tot, deep;
+bool vis[maxn];
+int N, M, tot;
 
 void read()
 {
@@ -59,55 +58,31 @@ void get(int v)
 	}
 }
 
-void dfs()
+void dfs(int v, int fa1)
 {
-	while (deep)
+	vis[v] = true;
+	for (int temp = g2[v]; temp; temp = next2[temp]) if (vis[s2[temp]])
 	{
-		vis[v[deep]] = true;
-		if (!ff[deep]) 
-		{
-			for (temp[deep] = g2[v[deep]]; temp[deep]; temp[deep] = next2[temp[deep]]) if (vis[s2[temp[deep]]])
-			{
-				int t = s2[temp[deep]];
-				get(t);
-				s3[++tot][0] = t, s3[tot][1] = v[deep], next3[tot] = g3[fa[t]]; g3[fa[t]] = tot; f3[tot] = temp[deep] / 2;
-				if ((temp[deep] & 1) == 0) swap(s3[tot][0], s3[tot][1]);
-			}
-		}
-	
-		if (!ff[deep]) temp[deep] = g1[v[deep]];
-		ff[deep] = true;
-		bool in = false;
-		for (; temp[deep]; )
-		{
-			if ((temp[deep] ^ 1) == fa1[deep])
-			{
-				temp[deep] = next[temp[deep]];
-				continue;
-			}	
-			v[deep + 1] = s[temp[deep]], fa1[deep + 1] = temp[deep];
-			ff[deep + 1] = false;
-			temp[deep] = next[temp[deep]];
-			in = true;
-			break;
-		}
-		if (in)
-		{
-			++deep; continue;
-		}
-
-		for (temp[deep] = g3[v[deep]]; temp[deep]; temp[deep] = next3[temp[deep]])
-		{
-			int s = s3[temp[deep]][0], t = s3[temp[deep]][1];
-			get(s), get(t);
-			int an = max(maxup[s], maxdown[t]);
-			an = max(an, maxw[t] - minw[s]);
-			ans[f3[temp[deep]]] = an;
-		}
-	
-		fa[v[deep]] = s[fa1[deep] ^ 1];
-		deep --;	
+		int t = s2[temp];
+		get(t);
+		s3[++tot][0] = t, s3[tot][1] = v, next3[tot] = g3[fa[t]]; g3[fa[t]] = tot; f3[tot] = temp / 2;
+		if ((temp & 1) == 0) swap(s3[tot][0], s3[tot][1]);
 	}
+	
+	for (int temp = g1[v]; temp; temp = next[temp]) if ((temp ^ 1) != fa1)
+		dfs(s[temp], temp);
+
+	for (int temp = g3[v]; temp; temp = next3[temp])
+	{
+		int s = s3[temp][0], t = s3[temp][1];
+		get(s), get(t);
+		int an = max(maxup[s], maxdown[t]);
+		an = max(an, maxw[t] - minw[s]);
+		ans[f3[temp]] = an;
+	}
+	
+	fa[v] = s[fa1 ^ 1];
+	
 }
 
 void check()
@@ -120,16 +95,24 @@ void check()
 	}
 	
 	for (int i = 1; i <= N; ++i) vis[i] = false;
-	deep = 1, tot = 1;
-	v[1] = 1, fa1[1] = 0;
-	memset(ff, false, sizeof ff);
-	dfs();
+	tot = 1;
+	dfs(1, 0);
 	
 	for (int i = 1; i <= M; ++i) cout << ans[i] << endl;
 }
 
 int main()
 {
+/*const int N_Max = 10000000;
+static int stack[N_Max * 5], bak;
+asm __volatile__
+(
+	"movl %%esp, %0;"
+	"movl %1, %%esp;":
+	"=g"(bak):
+	"g"(stack + N_Max * 5 - 1):
+);
+*/
 	read();
 	check();
 }
